@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { searchCities } from '../utils/citySearch';
 import { Search } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
-import '../styles/searchCities.scss';
+import '../styles/SearchCities.scss';
 import debounce from 'lodash/debounce';
 
 function SearchCities({ getCoordinate }) {
@@ -17,7 +17,7 @@ function SearchCities({ getCoordinate }) {
             setResults([]);
         }
     }, [searchTerm]);
-    
+
     // add debounce to prevent the function from being called too many times 
     const debouncedSearchCities = debounce((term) => {
         setIsLoading(true);
