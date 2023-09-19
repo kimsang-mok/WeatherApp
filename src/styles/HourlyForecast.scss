@@ -1,0 +1,47 @@
+.hourly-forecast {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    .hourly-image-container {
+        width: 64px;
+        height: 64px;
+    }
+
+    .hourly-lg {
+        flex: 1;
+        display: flex;
+        justify-content: space-evenly;
+
+        section {
+            text-align: center;
+        }
+    }
+
+    .hourly-sm {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        p {
+            margin: 0;
+        }
+    }
+}
+
+@media (max-width: 564px) {
+    .hourly-forecast {
+        justify-content: center;
+
+        .hourly-image-container {
+            width: 48px;
+            height: 48px;
+        }
+
+        .hourly-sm {
+            flex: 0;
+            flex-basis: 33%;
+        }
+    }
+}
