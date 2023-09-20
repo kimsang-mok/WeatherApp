@@ -1,13 +1,27 @@
-import cities from "../data/city_data.json";
+import axios from "axios";
 
-function removeDiacritics(str) {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-}
+const BASE_URL = import.meta.env.VITE_BASE_URL
+let cancelTokenSource = null;
 
-export function searchCities(query) {
-    const normalizedQuery = removeDiacritics(query).toLowerCase();
-    return cities.filter(city => {
-        const normizedCityName = removeDiacritics(city.name).toLowerCase();
-        return normizedCityName.includes(normalizedQuery);
-    });
+export async function searchCities(query) {
+    // cancel the previous request (if any)
+    if (cancelTokenSource) {
+        cancelTokenSource.cancel("Request canceled due to new search.");
+    }
+
+    cancelTokenSource = axios.CancelToken.source();
+
+    try {
+        const response = await axios.get(BASE_URL + `?q=${query}`, {
+            cancelToken: cancelTokenSource.token,
+        });
+
+        return response.data;
+    } catch (error) {
+        if (axios.isCancel(error)) {
+            console.log("Request canceled:", error.message);
+        } else {
+            console.error("Error fetching data:", error);
+        }
+    }
 }

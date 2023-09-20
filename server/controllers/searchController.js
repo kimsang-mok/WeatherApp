@@ -1,15 +1,18 @@
 import City from "../models/cityModel.js";
-import { removeAccents } from "./cityController.js";
+import { removeAccents } from "../utils/removeDiacritic.js";
 
 export const searchByName = async (req, res) => {
-    const searchTerm = req.query.q;
+    const searchTerm = removeAccents(req.query.q);
     try {
-        const results = await City.find({
-            "name": {
-                $regex: removeAccents(searchTerm),
-                $options: 'i'
-            }
-        });
+        const results = await City.aggregate([
+            {
+                $match: {
+                    "name": {
+                        $regex: new RegExp(searchTerm, 'i')
+                    }
+                }
+            },
+        ]);
 
         res.json(results);
     } catch (err) {

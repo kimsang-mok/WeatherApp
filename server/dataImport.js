@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { importCityData } from "./controllers/cityController.js";
+import { importCityData } from "./utils/cityDataWriter.js";
 import * as dotenv from 'dotenv';
 dotenv.config();
 

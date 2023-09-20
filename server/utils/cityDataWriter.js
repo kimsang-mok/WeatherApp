@@ -1,9 +1,6 @@
 import City from "../models/cityModel.js";
+import { removeAccents } from "./removeDiacritic.js";
 import fs from "fs";
-
-export const removeAccents = (str) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
 
 export async function importCityData() {
     try {
