@@ -12,7 +12,7 @@ export async function searchCities(query) {
     cancelTokenSource = axios.CancelToken.source();
 
     try {
-        const response = await axios.get(BASE_URL + `?q=${query}`, {
+        const response = await axios.get(BASE_URL + `city/search?q=${query}`, {
             cancelToken: cancelTokenSource.token,
         });
 

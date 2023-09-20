@@ -28,7 +28,7 @@ function SearchCities({ getCoordinate }) {
             } catch (error) {
                 console.error("Error searching cities:", error);
             }
-        }, 500);
+        }, 300);
 
     }, []);
 
