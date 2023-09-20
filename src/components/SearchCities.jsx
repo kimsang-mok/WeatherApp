@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { searchCities } from '../utils/citySearch';
 import { Search } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
@@ -9,29 +9,40 @@ function SearchCities({ getCoordinate }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [results, setResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const debouncedSearchCitiesRef = useRef(null)
 
     useEffect(() => {
-        if (searchTerm) {
-            debouncedSearchCities(searchTerm);
-        } else {
-            setResults([]);
-        }
-    }, [searchTerm]);
+        debouncedSearchCitiesRef.current = debounce(async (term) => {
+            try {
+                setIsLoading(true);
+                const foundCities = await searchCities(term);
+                const formattedResults = await foundCities?.slice(0, 10).map(city => ({
+                    title: city.name,
+                    description: city.country_name,
+                    lon: city.coord.lon,
+                    lat: city.coord.lat,
+                    key: city._id
+                }));
+                setResults(formattedResults);
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Error searching cities:", error);
+            }
+        }, 300);
+
+    }, []);
 
     // add debounce to prevent the function from being called too many times 
-    const debouncedSearchCities = debounce((term) => {
-        setIsLoading(true);
-        const foundCities = searchCities(term);
-        const formattedResults = foundCities.slice(0, 10).map(city => ({
-            title: city.name,
-            description: city.country_name,
-            lon: city.coord.lon,
-            lat: city.coord.lat,
-            key: city.id
-        }));
-        setResults(formattedResults);
-        setIsLoading(false);
-    }, 500);
+    useEffect(() => {
+        if (searchTerm) {
+            /* cancel any previous debounce action (so that a slower but later request doesn't overtake a newer but faster request) */
+            if (debouncedSearchCitiesRef.current) {
+                debouncedSearchCitiesRef.current.cancel();
+            }
+            // call the new debounced action with the updated searchTerm
+            debouncedSearchCitiesRef.current(searchTerm);
+        }
+    }, [searchTerm]);
 
     const handleResultSelect = (e, { result }) => {
         const { lat, lon } = result;
